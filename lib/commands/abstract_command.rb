@@ -101,13 +101,13 @@ module Gem
       auth = "Basic #{Base64.encode64(token).gsub(/\s+/, '')}"
       @authorization = token == ':' ? nil : auth
 
-      unless config.always_prompt?
-        config.authorization = @authorization
-        if @authorization
-          say "Your Nexus credentials have been stored in #{config}"
-        else
-          say "Your Nexus credentials have been deleted from #{config}"
-        end
+      return if config.always_prompt?
+
+      config.authorization = @authorization
+      if @authorization
+        say "Your Nexus credentials have been stored in #{config}"
+      else
+        say "Your Nexus credentials have been deleted from #{config}"
       end
     end
 
