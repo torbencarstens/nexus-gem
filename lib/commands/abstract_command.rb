@@ -174,6 +174,9 @@ module Gem
         warn "use proxy at #{http.proxy_address}:#{http.proxy_port}" if http.proxy_address
       end
 
+      if Gem.configuration.verbose.to_s.to_i.positive?
+        say "http request to #{self.url}/#{path} for #{method}"
+      end
       http.request(request)
     end
 

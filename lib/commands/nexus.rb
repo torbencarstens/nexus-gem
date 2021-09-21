@@ -123,6 +123,9 @@ module Gem
           when '500'
             say 'something went wrong'
           else
+            if Gem.configuration.verbose.to_s.to_i.positive?
+              say "body:\n\t`#{response.message}`\n"
+            end
             say "#{response.message} #{path.split(%r{/}).last}"
           end
 
