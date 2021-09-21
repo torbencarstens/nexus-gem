@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name = 'nexus-debug'
   s.version = Nexus::VERSION
 
-  s.authors = ['Nick Quaranto', 'Christian Meier', 'Torben Carstens']
+  s.authors = %w[Nick Quaranto Christian Meier Torben Carstens]
   s.email = %w[nick@quaran.to m.kristian@web.de rubygems@carstens.tech]
 
   s.license = 'MIT'
