@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rubygems/local_remote_options'
 require 'net/http'
 require 'base64'
@@ -6,16 +7,15 @@ require 'yaml'
 
 module Nexus
   class ConfigFile
-
-    def initialize( configfile )
+    def initialize(configfile)
       raise 'no file given' unless configfile
-      
+
       @all = {}
-      if configfile.is_a?( String )
+      if configfile.is_a?(String)
         @file = configfile
-        
-        if File.exists?( configfile )
-          @all = YAML.load( ::File.read( configfile ) )
+
+        if File.exist?(configfile)
+          @all = YAML.load(::File.read(configfile))
         else
           store # make sure we can write it
         end
@@ -26,88 +26,95 @@ module Nexus
     end
 
     attr_reader :all, :file
-    
-    def data( repo )
+
+    def data(repo)
       if repo
-        ( @all[ repo ] ||= {} )
+        (@all[repo] ||= {})
       else
         @all
       end
     end
-    
-    def key?( key, repo = nil )
-      data( repo ).key? key
+
+    def key?(key, repo = nil)
+      data(repo).key? key
     end
-    
-    def []( key, repo = nil )
-      data( repo )[ key ]
+
+    def [](key, repo = nil)
+      data(repo)[key]
     end
-    
-    def []=( key, repo, value )
+
+    def []=(key, repo, value)
       if value.nil?
-        data( repo ).delete( key )
+        data(repo).delete(key)
       else
-        data( repo )[ key ] = value
+        data(repo)[key] = value
       end
     end
 
     def repos
-      all.collect do |k,v|
+      all.collect do |k, v|
         k if v.is_a? Hash
       end.select { |s| s }
     end
 
-    def section( key )
-      all.dup.select do |k,v|
+    def section(key)
+      all.dup.select do |k, v|
         if v.is_a? Hash
-          v.delete_if { |kk,vv| kk != key }
+          v.delete_if { |kk, _vv| kk != key }
         else
           k == key
         end
       end
     end
 
-    def delete( *keys )
-      delete_map( all, *keys )
-      all.each do |k,v|
-        delete_map(v, *keys ) if v.is_a? Hash
+    def delete(*keys)
+      delete_map(all, *keys)
+      all.each do |_k, v|
+        delete_map(v, *keys) if v.is_a? Hash
       end
     end
-    
-    def delete_map( map, *keys )
-      keys.each { |k| map.delete( k ) }
+
+    def delete_map(map, *keys)
+      keys.each { |k| map.delete(k) }
     end
+
     private :delete_map
 
-    def merge!( other )
+    def merge!(other)
       map = other.all
-      merge_map( @all, map )
+      merge_map(@all, map)
     end
-    
-    def merge_map( m1, m2 )
+
+    def merge_map(m1, m2)
       return m2 unless m1
-      m2.each do |k,v|
+
+      m2.each do |k, v|
         if v.is_a? Hash
-          m1[ k ] ||= {}
-          merge_map( m1[ k ], v )
+          m1[k] ||= {}
+          merge_map(m1[k], v)
         else
-          m1[ k ] = v
+          m1[k] = v
         end
       end
     end
+
     private :merge_map
-    
+
     def store
-      dirname = File.dirname( @file )
-      Dir.mkdir( dirname ) unless File.exists?( dirname )
-      new = !File.exists?( @file )
-      
-      File.open( @file, 'w') do |f|
+      dirname = File.dirname(@file)
+      Dir.mkdir(dirname) unless File.exist?(dirname)
+      new = !File.exist?(@file)
+
+      File.open(@file, 'w') do |f|
         f.write @all.to_yaml
       end
       if new
-        File.chmod( 0100600, @file ) rescue nil
+        begin
+          File.chmod(0o100600, @file)
+        rescue StandardError
+          nil
+        end
       end
     end
-  end  
+  end
 end
