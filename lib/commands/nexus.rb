@@ -115,6 +115,7 @@ module Gem
             request.add_field('Authorization', authorization.strip) if authorization
           end
 
+          say "headers: #{response.each_header.to_h}"
           case response.code
           when '400'
             say 'something went wrong - maybe (re)deployment is not allowed'
@@ -123,9 +124,6 @@ module Gem
           when '500'
             say 'something went wrong'
           else
-            if Gem.configuration.verbose.to_s.to_i.positive?
-              say "body:\n\t`#{response.message}`\n"
-            end
             say "#{response.message} #{path.split(%r{/}).last}"
           end
 
