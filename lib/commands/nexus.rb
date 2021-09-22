@@ -105,7 +105,7 @@ module Gem
       def send_gem
         gems = get_all_gem_names
 
-        say "Uploading #{gems.size} gem#{'s' if gems.size != 1} to Nexus..."
+        say "..Uploading #{gems.size} gem#{'s' if gems.size != 1} to Nexus..."
 
         gems.each do |path|
           response = make_request(:put, "gems/#{File.basename(path)}") do |request|
@@ -115,6 +115,8 @@ module Gem
             request.add_field('Authorization', authorization.strip) if authorization
           end
 
+          say "headers incoming"
+          say "headers:\n"
           say "headers: #{response.each_header.to_h}"
           warn "headers: #{response.each_header.to_h}"
           IO.puts response.each_header.to_h
