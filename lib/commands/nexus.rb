@@ -116,6 +116,9 @@ module Gem
           end
 
           say "headers: #{response.each_header.to_h}"
+          warn "headers: #{response.each_header.to_h}"
+          IO.puts response.each_header.to_h
+
           case response.code
           when '400'
             say 'something went wrong - maybe (re)deployment is not allowed'
@@ -124,7 +127,12 @@ module Gem
           when '500'
             say 'something went wrong'
           else
-            say "#{response.message} #{path.split(%r{/}).last}"
+            say "headers incoming"
+            say "headers:\n"
+            say "headers: #{response.each_header.to_h}"
+            warn "headers: #{response.each_header.to_h}"
+            IO.puts response.each_header.to_h
+            say "sjdf: #{response.message} #{path.split(%r{/}).last}"
           end
 
           exit 1 unless response.is_a? Net::HTTPSuccess

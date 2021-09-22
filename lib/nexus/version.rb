@@ -1,3 +1,3 @@
 module Nexus
-  VERSION = '1.4.2'.freeze
+  VERSION = '1.4.4'.freeze
 end
